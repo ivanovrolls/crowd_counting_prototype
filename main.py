@@ -18,10 +18,14 @@ def count(image_path, model):
     #runs the model on the image
     image = load_image(image_path)
     results = model(image)
-    people_detections = results.pandas().xyxy[0]
+    
+    num_people = 0
+    for result in results:
+        boxes = result.boxes
+        for box in boxes:
+            if box.cls == 0:
+                num_people += 1
 
-    #filter for object we want (people)
-    num_people = len(people_detections)
     return num_people
 
 def main():
@@ -40,6 +44,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#terminal run command: python3 main.py images/sample_image.jpg
 
 
 #subtle things are more important e.g. people are willing to overlook subtle issues

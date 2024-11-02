@@ -13,6 +13,16 @@ def load_image(image_path):
         raise ValueError(f"Image not found at {image_path}")
     return image
 
+def extract_boxes(box, image):
+    x1, y1, x2, y2 = map(int, box.xyxy[0]) #coordinates for boxes
+    cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2) #draw rectangles on specified coordinates
+    cv2.putText(image, 'Person', (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2) #labels the boxes
+
+def output_boxes(image):
+    output_path = "boxedImage.jpg"
+    cv2.imwrite(output_path, image)
+    print(f"Image with bounding boxes saved as {output_path}")
+
 def count(image_path, model):
     
     #runs the model on the image
@@ -25,7 +35,9 @@ def count(image_path, model):
         for box in boxes:
             if box.cls == 0:
                 num_people += 1
-
+                extract_boxes(box, image)
+    
+    output_boxes(image)
     return num_people
 
 def main():
